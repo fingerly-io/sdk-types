@@ -305,6 +305,32 @@ export interface IdentifySubmission {
   tag?: string
 }
 
+/** A deferred source report attached to an already completed identification. */
+export interface DeferredSubmission {
+  sdk: { platform: SdkPlatform; version: string }
+  signals: SignalReport
+  token: string
+}
+
+export type DeferredIdentifyResult =
+  | {
+      status: 'submitted'
+      report: SignalReport
+      combinedReport: SignalReport
+      verdicts: Verdicts
+    }
+  | {
+      status: 'skipped'
+      reason: 'not-submitted' | 'explicit-tiers' | 'duplicate' | 'unsupported-transport'
+    }
+  | {
+      status: 'failed'
+      error: Error
+      report?: SignalReport
+      combinedReport?: SignalReport
+      verdicts?: Verdicts
+    }
+
 /**
  * The answer.
  *
@@ -393,6 +419,9 @@ export interface IdentifyResult {
   verdicts: Verdicts
   /** The report that was sent, for debugging and for offline callers. */
   report: SignalReport
+
+  /** Completion of the non-authoritative second-tier collection and upload. */
+  deferred: Promise<DeferredIdentifyResult>
 }
 
 /** One signal that fired on the server, and what it contributed. */
