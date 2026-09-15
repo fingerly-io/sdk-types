@@ -1,5 +1,5 @@
 /**
- * The shapes every Badele SDK speaks in.
+ * The shapes every Fingerly SDK speaks in.
  *
  * Nothing here touches the DOM. A type that only a browser can populate still
  * belongs in this file, because the server and the mobile SDKs both need to
@@ -27,7 +27,7 @@ export type SdkPlatform =
   | 'lynx-android'
 
 /** Configuration shared by JavaScript-based native SDK facades. */
-export interface MobileBadeleOptions {
+export interface MobileFingerlyOptions {
   /** The SDK key, from the dashboard. */
   apiKey: string
   /** Origin of the API. Defaults to production. */
@@ -337,7 +337,7 @@ export type DeferredIdentifyResult =
  * Note what is absent: there is no visitor identifier computed here, because
  * the client does not compute one. other libraries hashes its components in the
  * page, which makes the identity forgeable by the visitor and freezes the
- * matching algorithm into whatever SDK version a customer deployed. Badele
+ * matching algorithm into whatever SDK version a customer deployed. Fingerly
  * submits the raw report and lets the server decide who this is - and then
  * tells you, in the same response.
  */
@@ -501,7 +501,7 @@ export interface Velocity {
 }
 
 /** Fields every platform reports. */
-export interface BadeleEventBase {
+export interface FingerlyEventBase {
   event_id: string
   timestamp: number
   source: 'device'
@@ -526,7 +526,7 @@ export interface BadeleEventBase {
  * Absent on web rather than `false`, because a browser cannot look for a root
  * app and reporting "no" would be a claim nobody made.
  */
-export interface BadeleMobileEvent extends BadeleEventBase {
+export interface FingerlyMobileEvent extends FingerlyEventBase {
   sdk: { platform: 'android' | 'ios'; version: string }
   package_name: string
   emulator: boolean
@@ -538,7 +538,7 @@ export interface BadeleMobileEvent extends BadeleEventBase {
   active_call: boolean
 }
 
-export interface BadeleWebEvent extends BadeleEventBase {
+export interface FingerlyWebEvent extends FingerlyEventBase {
   sdk: { platform: 'web'; version: string }
   browser_name: string
   browser_version: string
@@ -546,4 +546,4 @@ export interface BadeleWebEvent extends BadeleEventBase {
   ad_blocker: boolean
 }
 
-export type BadeleEvent = BadeleMobileEvent | BadeleWebEvent
+export type FingerlyEvent = FingerlyMobileEvent | FingerlyWebEvent

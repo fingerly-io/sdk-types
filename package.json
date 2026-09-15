@@ -1,9 +1,9 @@
 {
-  "name": "@badele/types",
+  "name": "@fingerly/types",
   "version": "0.0.0",
   "private": true,
   "packageManager": "pnpm@9.0.0",
-  "description": "Shared TypeScript contracts for every Badele SDK",
+  "description": "Shared TypeScript contracts for every Fingerly SDK",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
