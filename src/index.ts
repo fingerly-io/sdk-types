@@ -43,6 +43,17 @@ export interface MobileIdentifyOptions {
 }
 
 /**
+ * Whether the visitor has agreed to be identified.
+ *
+ * `granted` is the default, and is how every SDK behaved before this existed.
+ * `pending` and `denied` mean the same thing to the SDK - run no source, touch
+ * no storage, send nothing, and fail `identify()` with a consent error - and
+ * are kept apart only because a consent tool reports them apart, and a page
+ * deciding whether to show its banner wants to know which one it has.
+ */
+export type ConsentState = 'granted' | 'pending' | 'denied'
+
+/**
  * How a source finished.
  *
  * This is the deliberate departure from other libraries, which collapses every
@@ -321,7 +332,11 @@ export type DeferredIdentifyResult =
     }
   | {
       status: 'skipped'
-      reason: 'not-submitted' | 'explicit-tiers' | 'duplicate' | 'unsupported-transport'
+      /**
+       * `consent-withdrawn` when consent stopped being `granted` after the
+       * first response and before the supplement was sent.
+       */
+      reason: 'not-submitted' | 'explicit-tiers' | 'duplicate' | 'unsupported-transport' | 'consent-withdrawn'
     }
   | {
       status: 'failed'
