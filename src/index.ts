@@ -45,9 +45,10 @@ export interface MobileIdentifyOptions {
 /**
  * Whether the visitor has agreed to be identified.
  *
- * `granted` is the default, and is how every SDK behaved before this existed.
- * `pending` and `denied` mean the same thing to the SDK - run no source, touch
- * no storage, send nothing, and fail `identify()` with a consent error - and
+ * `pending` is the default: an SDK identifies nobody until it is told
+ * `granted`. `pending` and `denied` mean the same thing to the SDK - run no
+ * source, touch no storage, send nothing, and fail `identify()` with a consent
+ * error - and
  * are kept apart only because a consent tool reports them apart, and a page
  * deciding whether to show its banner wants to know which one it has.
  */
@@ -312,6 +313,12 @@ export interface NativeIdentifyResult {
 /** A submission, as the body of `POST /api/v1/ingest` (or `/api/v1/identify`). */
 export interface IdentifySubmission {
   sdk: { platform: SdkPlatform; version: string }
+  /**
+   * The SDK's consent state when it sent this. Always `granted`, since an SDK
+   * sends nothing otherwise; the server refuses any other value with a 422
+   * `consent_required`.
+   */
+  consent: ConsentState
   signals: SignalReport
   tag?: string
 }
@@ -319,6 +326,8 @@ export interface IdentifySubmission {
 /** A deferred source report attached to an already completed identification. */
 export interface DeferredSubmission {
   sdk: { platform: SdkPlatform; version: string }
+  /** As on [[IdentifySubmission.consent]]. */
+  consent: ConsentState
   signals: SignalReport
   token: string
 }
