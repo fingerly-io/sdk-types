@@ -309,7 +309,7 @@ export interface NativeIdentifyResult {
   report: SignalReport
 }
 
-/** A submission, as the body of `POST /api/v1/identify`. */
+/** A submission, as the body of `POST /api/v1/ingest` (or `/api/v1/identify`). */
 export interface IdentifySubmission {
   sdk: { platform: SdkPlatform; version: string }
   signals: SignalReport
