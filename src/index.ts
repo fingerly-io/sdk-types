@@ -30,7 +30,7 @@ export type SdkPlatform =
 export interface MobileFingerlyOptions {
   /** The SDK key, from the dashboard. */
   apiKey: string
-  /** Origin of the API. Defaults to production. */
+  /** Origin of the API. Defaults to production. Submissions go to `/api/v1/ingest` under it. */
   endpoint?: string
 }
 
@@ -310,7 +310,7 @@ export interface NativeIdentifyResult {
   report: SignalReport
 }
 
-/** A submission, as the body of `POST /api/v1/ingest` (or `/api/v1/identify`). */
+/** A submission, as the body of `POST /api/v1/ingest`. */
 export interface IdentifySubmission {
   sdk: { platform: SdkPlatform; version: string }
   /**
