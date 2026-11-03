@@ -1,7 +1,7 @@
 {
   "name": "@fingerly/types",
   "version": "0.1.0",
-  "private": true,
+  "publishConfig": { "access": "public" },
   "packageManager": "pnpm@9.0.0",
   "description": "Shared TypeScript contracts for every Fingerly SDK",
   "license": "Apache-2.0",
