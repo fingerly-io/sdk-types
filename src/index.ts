@@ -57,10 +57,9 @@ export type ConsentState = 'granted' | 'pending' | 'denied'
 /**
  * How a source finished.
  *
- * This is the deliberate departure from other libraries, which collapses every
- * failure into one `error` token - so a browser that lacks an API, a privacy
- * extension that blocked it, and a throttled tab that ran out of time all hash
- * identically. They are three different facts about a visitor:
+ * Collapsing every failure into one `error` token would make a browser that
+ * lacks an API, a privacy extension that blocked it, and a throttled tab that
+ * ran out of time all hash identically. They are three different facts about a visitor:
  *
  * - `ok`          the source produced a value.
  * - `unsupported` the API is not present. A property of the device/browser.
@@ -359,9 +358,9 @@ export type DeferredIdentifyResult =
  * The answer.
  *
  * Note what is absent: there is no visitor identifier computed here, because
- * the client does not compute one. other libraries hashes its components in the
- * page, which makes the identity forgeable by the visitor and freezes the
- * matching algorithm into whatever SDK version a customer deployed. Fingerly
+ * the client does not compute one. Hashing components in the page would make
+ * the identity forgeable by the visitor and freeze the matching algorithm
+ * into whatever SDK version a customer deployed. Fingerly
  * submits the raw report and lets the server decide who this is - and then
  * tells you, in the same response.
  */
