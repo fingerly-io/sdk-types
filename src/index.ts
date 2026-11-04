@@ -298,7 +298,12 @@ export interface NativeIdentifyResult {
   duplicate: boolean
 
   state: string
-  reason: string
+  /**
+   * @deprecated An app is no longer told why a submission went unscored, so
+   * this is `undefined`. Read `reason` on the server-side event read. See
+   * [[IdentifyResult.reason]].
+   */
+  reason?: string
 
   /** `null` when the submission was not scored, which is not the same as zero. */
   suspectScore: number | null
@@ -415,8 +420,16 @@ export interface IdentifyResult {
 
   /** `enriched`, or `unavailable` when the address could not be looked up. */
   state: string
-  /** Why enrichment did not happen, as a short stable token. Empty otherwise. */
-  reason: string
+  /**
+   * @deprecated Browsers no longer receive this, so it is `undefined`.
+   *
+   * Why an `unavailable` submission went unscored describes the service's own
+   * infrastructure, which is nothing a visitor's page should be able to read.
+   * Your backend reads it as `reason` on the server-side event read (`GET
+   * /api/v1/events/{request_id}` with a secret key), by [[requestId]]. Kept,
+   * optional, so code written against 0.1.0 still compiles.
+   */
+  reason?: string
 
   /**
    * The weighted sum of the signals that fired, under the weights in force when
