@@ -236,10 +236,15 @@ export interface NativeIdentifyResult {
    */
   reason?: string
 
-  /** `null` when the submission was not scored, which is not the same as zero. */
+  /**
+   * A convenience for showing a result straight away. `null` when the
+   * submission was not scored or the SDK key hides the score from apps, and an
+   * app cannot tell which; neither is the same as zero. The signals behind a
+   * score are read on your backend.
+   */
   suspectScore: number | null
+  /** `low`, `medium` or `high`. `null` exactly when `suspectScore` is. */
   suspectLevel: string | null
-  triggers: IdentifyTrigger[]
 
   report: SignalReport
 }
