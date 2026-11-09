@@ -19,6 +19,12 @@ describe('the identify result', () => {
     const built: IdentifyResult = result
     void built
   })
+
+  it('tells an app a nullable score and never a signal', () => {
+    expectTypeOf<NativeIdentifyResult['suspectScore']>().toEqualTypeOf<number | null>()
+    expectTypeOf<NativeIdentifyResult['suspectLevel']>().toEqualTypeOf<string | null>()
+    expectTypeOf<NativeIdentifyResult>().not.toHaveProperty('triggers')
+  })
 })
 
 describe('what a public caller can be missing', () => {
