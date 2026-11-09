@@ -5,6 +5,7 @@ import type {
   DeferredSubmission,
   IdentifyResult,
   IdentifySubmission,
+  IdentifyTrigger,
   NativeIdentifyResult,
 } from '../src/index.js'
 
@@ -17,6 +18,23 @@ describe('the identify result', () => {
     // Assignable without it: nothing that builds a result has to invent one.
     const built: IdentifyResult = result
     void built
+  })
+})
+
+describe('what a public caller can be missing', () => {
+  it('keeps triggers optional and deprecated-compatible on the web result', () => {
+    expectTypeOf<IdentifyResult['triggers']>().toEqualTypeOf<IdentifyTrigger[] | undefined>()
+  })
+
+  it('removes triggers from the native result outright', () => {
+    expectTypeOf<NativeIdentifyResult>().not.toHaveProperty('triggers')
+  })
+
+  it('keeps score and level nullable, because absent is not zero', () => {
+    expectTypeOf<IdentifyResult['suspectScore']>().toEqualTypeOf<number | null>()
+    expectTypeOf<IdentifyResult['suspectLevel']>().toEqualTypeOf<string | null>()
+    expectTypeOf<NativeIdentifyResult['suspectScore']>().toEqualTypeOf<number | null>()
+    expectTypeOf<NativeIdentifyResult['suspectLevel']>().toEqualTypeOf<string | null>()
   })
 })
 
