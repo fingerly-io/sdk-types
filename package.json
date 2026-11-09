@@ -1,11 +1,11 @@
 {
   "name": "@fingerly/types",
-  "version": "0.2.0",
+  "version": "0.1.1",
   "publishConfig": { "access": "public" },
   "packageManager": "pnpm@9.0.0",
   "description": "Shared TypeScript contracts for every Fingerly SDK",
   "license": "Apache-2.0",
-  "repository": {"type": "git", "url": "https://github.com/fingerly-io/sdk-types.git"},
+  "repository": {"type": "git", "url": "https://github.com/fingerly-io/sdks.git", "directory": "client/web/types"},
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

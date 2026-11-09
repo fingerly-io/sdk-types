@@ -128,7 +128,7 @@ export interface EngineIdentity {
   claimed?: string
   observed?: string
   /**
-   * @deprecated Not sent since 0.2.0. The server compares [[claimed]] and
+   * @deprecated Not sent since 0.1.1. The server compares [[claimed]] and
    * [[observed]] itself; kept so a report stored by an older SDK still types.
    */
   agrees?: boolean
@@ -164,43 +164,8 @@ export interface SignalReport {
   integrity: IntegrityReport
 }
 
-/** How sure a verdict is. Matches the server's `*_confidence` fields. */
+/** How sure the server is of a finding. Matches its `*_confidence` fields. */
 export type Confidence = 'low' | 'medium' | 'high'
-
-/**
- * One signal, as the server reported it.
- *
- * A browser is no longer told which signals fired, so `value` is `null` in
- * every result from this version on. Null is not a clean result, only the
- * absence of one, and reading it as `false` is exactly the mistake this type
- * exists to stop. Read signals on your backend.
- *
- * `reasons` is empty for the same reason.
- */
-export interface Verdict {
-  value: boolean | null
-  confidence: Confidence
-  reasons: string[]
-}
-
-/**
- * @deprecated Read `suspectLevel` in the page, and read signals on your
- * backend. A browser is no longer told which signals fired, so each of these
- * holds no answer (`value: null`), never a clean `false`.
- */
-export interface Verdicts {
-  incognito: Verdict
-  /**
-   * @deprecated Always `value: null`. A browser's privacy protection is not a
-   * finding, so the server reports no signal for it and this holds no answer.
-   */
-  shields: Verdict
-  tor: Verdict
-  emulator: Verdict
-  automation: Verdict
-  /** @deprecated Follows the server's `device_farm` signal. */
-  farm: Verdict
-}
 
 /** What a native `identify()` resolves with. See [[IdentifyResult]]. */
 export interface NativeIdentifyResult {
@@ -266,8 +231,6 @@ export type DeferredIdentifyResult =
       status: 'submitted'
       report: SignalReport
       combinedReport: SignalReport
-      /** @deprecated Holds no answer, as [[IdentifyResult.verdicts]]. */
-      verdicts: Verdicts
     }
   | {
       status: 'skipped'
@@ -282,8 +245,6 @@ export type DeferredIdentifyResult =
       error: Error
       report?: SignalReport
       combinedReport?: SignalReport
-      /** @deprecated As on `submitted`. */
-      verdicts?: Verdicts
     }
 
 /**
@@ -376,41 +337,11 @@ export interface IdentifyResult {
   /** `low`, `medium` or `high`. `null` when absent, as [[suspectScore]]. */
   suspectLevel: string | null
 
-  /**
-   * @deprecated Read signals on your backend. Empty from a public key: a page
-   * is no longer told which signals fired, because that teaches a fraudster
-   * what to hide. Only a backend proxy passing through what a secret key read
-   * can fill this.
-   */
-  triggers?: IdentifyTrigger[]
-
-  /**
-   * @deprecated Read [[suspectLevel]], and read signals on your backend. Holds
-   * no answer (`value: null`), never a clean `false`, kept so code written
-   * against 0.1.x still compiles.
-   */
-  verdicts: Verdicts
   /** The report that was sent, for debugging and for offline callers. */
   report: SignalReport
 
   /** Completion of the non-authoritative second-tier collection and upload. */
   deferred: Promise<DeferredIdentifyResult>
-}
-
-/** @deprecated One signal that fired on the server. Read signals on your backend. */
-export interface IdentifyTrigger {
-  signal: string
-  /** The card this signal is reported under, such as `vpn` for `vpn_public`. */
-  group: string
-  /**
-   * @deprecated No longer sent to a browser. A customer's weights are not a
-   * page's business, so it is `undefined` here; a secret-key backend reads it
-   * on the server-side event read.
-   */
-  weight?: number
-  confidence: string
-  /** The tell that fired it, such as `known-tor-exit`. */
-  reason: string
 }
 
 // ---------------------------------------------------------------------------
