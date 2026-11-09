@@ -127,6 +127,10 @@ export interface Lie {
 export interface EngineIdentity {
   claimed?: string
   observed?: string
+  /**
+   * @deprecated Not sent since 0.2.0. The server compares [[claimed]] and
+   * [[observed]] itself; kept so a report stored by an older SDK still types.
+   */
   agrees?: boolean
 }
 
@@ -164,47 +168,42 @@ export interface SignalReport {
 export type Confidence = 'low' | 'medium' | 'high'
 
 /**
- * One detector's answer.
+ * One signal, as the server reported it.
  *
- * `reasons` is the point of this type. A boolean that cannot say why it is
- * true is not reviewable, and every one of these verdicts will eventually be
- * argued with by a customer looking at a blocked user.
+ * `value` is `true` when the server's trigger for it fired and `false` when the
+ * server answered and it did not. It is `null` when no server has answered:
+ * `submit: false`, an unscored submission, or a stub call. Null is not a clean
+ * result, only the absence of one, and reading it as `false` is exactly the
+ * mistake this type exists to stop.
+ *
+ * `reasons` is why it fired, strongest first, in the server's own tokens.
  */
 export interface Verdict {
-  value: boolean
+  value: boolean | null
   confidence: Confidence
   reasons: string[]
 }
 
 /**
- * The verdicts the client can reach on its own.
+ * @deprecated Read `suspectLevel` and `triggers`. These are derived from the
+ * server's triggers and carry no decision of their own: nothing is computed in
+ * the page any more.
  *
- * These are computed in the page for the caller's convenience - a login form
- * that wants to step up to MFA should not have to wait for enrichment. They
- * are *not* authoritative: the same functions run again on the server, over
- * the stored report, with rules that can improve without an SDK release. A
- * client-side verdict is advice; the server's is the answer.
+ * Which signal each one follows: `incognito`, `tor` and `automation` by name,
+ * `emulator` from `virtual_machine` and `farm` from `device_farm`. `shields`
+ * follows nothing and always holds no answer.
  */
 export interface Verdicts {
   incognito: Verdict
   /**
-   * Anti-fingerprinting countermeasures are rewriting this report's values.
-   *
-   * The one verdict here that is never a reason to challenge anyone. It says
-   * which of the other numbers are fabricated - Brave's farbling, Tor's RFP, an
-   * anti-detect build - so the detectors above it can decline to reason from
-   * them and the identity hash can decline to include them. A customer acting
-   * on this one is acting on "uses a privacy browser", which is not a finding.
+   * @deprecated Always `value: null`. A browser's privacy protection is not a
+   * finding, so the server reports no signal for it and this holds no answer.
    */
   shields: Verdict
   tor: Verdict
   emulator: Verdict
   automation: Verdict
-  /**
-   * Device farms are fundamentally a server-side finding - N identical devices
-   * behind one ASN - so this verdict only reports the client-observable half:
-   * a device that looks mass-provisioned or reset-fresh.
-   */
+  /** @deprecated Follows the server's `device_farm` signal. */
   farm: Verdict
 }
 
@@ -290,12 +289,20 @@ export interface NativeIdentifyResult {
 
   /** Who this visitor is. See [[IdentifyResult.visitorId]]. */
   visitorId: string
-  visitorIsNew: boolean
-  /** How sure the server is, 0 to 100. See [[IdentifyResult.visitorConfidence]]. */
-  visitorConfidence: number
-  identifiable: boolean
-  /** True when this submission was answered before; the fields above are empty. */
-  duplicate: boolean
+  /** `null` when the server did not say, which is not the same as `false`. */
+  visitorIsNew: boolean | null
+  /**
+   * How sure the server is, 0 to 100. `null` when it did not say, which is not
+   * the same as zero. See [[IdentifyResult.visitorConfidence]].
+   */
+  visitorConfidence: number | null
+  /** `null` when the server did not say. */
+  identifiable: boolean | null
+  /**
+   * True when this submission was answered before; the fields above are empty.
+   * `null` when the server did not say.
+   */
+  duplicate: boolean | null
 
   state: string
   /**
@@ -341,6 +348,7 @@ export type DeferredIdentifyResult =
       status: 'submitted'
       report: SignalReport
       combinedReport: SignalReport
+      /** @deprecated The verdicts from the first answer, unchanged. A deferred report is never scored. */
       verdicts: Verdicts
     }
   | {
@@ -356,6 +364,7 @@ export type DeferredIdentifyResult =
       error: Error
       report?: SignalReport
       combinedReport?: SignalReport
+      /** @deprecated As on `submitted`. */
       verdicts?: Verdicts
     }
 
@@ -451,7 +460,11 @@ export interface IdentifyResult {
   /** What fired, and what each was worth. */
   triggers: IdentifyTrigger[]
 
-  /** The local verdicts, available before the round trip. Advisory; see [[Verdicts]]. */
+  /**
+   * @deprecated Read [[suspectLevel]] and [[triggers]]. Derived from the
+   * server's triggers, once, for code written against 0.1.x; there is nothing
+   * local behind it. Empty, never clean, when no server answered.
+   */
   verdicts: Verdicts
   /** The report that was sent, for debugging and for offline callers. */
   report: SignalReport
@@ -460,16 +473,17 @@ export interface IdentifyResult {
   deferred: Promise<DeferredIdentifyResult>
 }
 
-/** One signal that fired on the server, and what it contributed. */
+/** One signal that fired on the server. */
 export interface IdentifyTrigger {
   signal: string
   /** The card this signal is reported under, such as `vpn` for `vpn_public`. */
   group: string
   /**
-   * The weight as it was applied, under the profile in force at the time. A
-   * customer who lowers a weight has not changed what last week scored.
+   * @deprecated No longer sent to a browser. A customer's weights are not a
+   * page's business, so it is `undefined` here; a secret-key backend reads it
+   * on the server-side event read.
    */
-  weight: number
+  weight?: number
   confidence: string
   /** The tell that fired it, such as `known-tor-exit`. */
   reason: string
