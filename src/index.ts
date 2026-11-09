@@ -170,13 +170,12 @@ export type Confidence = 'low' | 'medium' | 'high'
 /**
  * One signal, as the server reported it.
  *
- * `value` is `true` when the server's trigger for it fired and `false` when the
- * server answered and it did not. It is `null` when no server has answered:
- * `submit: false`, an unscored submission, or a stub call. Null is not a clean
- * result, only the absence of one, and reading it as `false` is exactly the
- * mistake this type exists to stop.
+ * A browser is no longer told which signals fired, so `value` is `null` in
+ * every result from this version on. Null is not a clean result, only the
+ * absence of one, and reading it as `false` is exactly the mistake this type
+ * exists to stop. Read signals on your backend.
  *
- * `reasons` is why it fired, strongest first, in the server's own tokens.
+ * `reasons` is empty for the same reason.
  */
 export interface Verdict {
   value: boolean | null
@@ -185,13 +184,9 @@ export interface Verdict {
 }
 
 /**
- * @deprecated Read `suspectLevel` and `triggers`. These are derived from the
- * server's triggers and carry no decision of their own: nothing is computed in
- * the page any more.
- *
- * Which signal each one follows: `incognito`, `tor` and `automation` by name,
- * `emulator` from `virtual_machine` and `farm` from `device_farm`. `shields`
- * follows nothing and always holds no answer.
+ * @deprecated Read `suspectLevel` in the page, and read signals on your
+ * backend. A browser is no longer told which signals fired, so each of these
+ * holds no answer (`value: null`), never a clean `false`.
  */
 export interface Verdicts {
   incognito: Verdict
@@ -312,10 +307,10 @@ export interface NativeIdentifyResult {
    */
   reason?: string
 
-  /** `null` when the submission was not scored, which is not the same as zero. */
+  /** `null` when absent: unscored, or hidden by the SDK key. Not the same as zero. */
   suspectScore: number | null
+  /** `null` when absent, for the same reasons as [[suspectScore]]. */
   suspectLevel: string | null
-  triggers: IdentifyTrigger[]
 
   verdicts: MobileVerdicts
   report: SignalReport
@@ -348,7 +343,7 @@ export type DeferredIdentifyResult =
       status: 'submitted'
       report: SignalReport
       combinedReport: SignalReport
-      /** @deprecated The verdicts from the first answer, unchanged. A deferred report is never scored. */
+      /** @deprecated Holds no answer, as [[IdentifyResult.verdicts]]. */
       verdicts: Verdicts
     }
   | {
@@ -444,26 +439,32 @@ export interface IdentifyResult {
    * The weighted sum of the signals that fired, under the weights in force when
    * this submission was scored.
    *
-   * `null` when the submission was not scored, which is a different answer from
-   * zero: an ordinary visitor scores zero, and one whose enrichment never ran
-   * has no score at all. Anything computed as a share of your traffic divides
-   * by one of those two populations, so collapsing them makes the number
-   * plausible and wrong.
+   * `null` when the submission was not scored, or when the SDK key hides the
+   * score from public callers: the page is not told which, and your backend
+   * still reads the score on the event. Either is a different answer from
+   * zero: an ordinary visitor scores zero. Anything computed as a share of your
+   * traffic divides by one of those populations, so collapsing them makes the
+   * number plausible and wrong.
    *
    * Not a percentage and not capped. Normalising it to 0-100 would discard the
    * difference between "over the line" and "far over the line".
    */
   suspectScore: number | null
-  /** `low`, `medium` or `high`. `null` exactly when [[suspectScore]] is. */
+  /** `low`, `medium` or `high`. `null` when absent, as [[suspectScore]]. */
   suspectLevel: string | null
 
-  /** What fired, and what each was worth. */
-  triggers: IdentifyTrigger[]
+  /**
+   * @deprecated Read signals on your backend. Empty from a public key: a page
+   * is no longer told which signals fired, because that teaches a fraudster
+   * what to hide. Only a backend proxy passing through what a secret key read
+   * can fill this.
+   */
+  triggers?: IdentifyTrigger[]
 
   /**
-   * @deprecated Read [[suspectLevel]] and [[triggers]]. Derived from the
-   * server's triggers, once, for code written against 0.1.x; there is nothing
-   * local behind it. Empty, never clean, when no server answered.
+   * @deprecated Read [[suspectLevel]], and read signals on your backend. Holds
+   * no answer (`value: null`), never a clean `false`, kept so code written
+   * against 0.1.x still compiles.
    */
   verdicts: Verdicts
   /** The report that was sent, for debugging and for offline callers. */
@@ -473,7 +474,7 @@ export interface IdentifyResult {
   deferred: Promise<DeferredIdentifyResult>
 }
 
-/** One signal that fired on the server. */
+/** @deprecated One signal that fired on the server. Read signals on your backend. */
 export interface IdentifyTrigger {
   signal: string
   /** The card this signal is reported under, such as `vpn` for `vpn_public`. */

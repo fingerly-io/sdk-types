@@ -2,7 +2,8 @@
 
 ## 0.2.0
 
-- `Verdict.value` is `boolean | null`: `null` means no server answered, which is not a clean result. `Verdicts` and `IdentifyResult.verdicts` are deprecated; read `suspectLevel` and `triggers`.
+- `Verdict.value` is `boolean | null`, and `null` is not a clean result. `Verdicts` and `IdentifyResult.verdicts` are deprecated and hold nothing; read `suspectLevel` in the page and signals on your backend.
+- `IdentifyResult.triggers` is optional and deprecated, empty from a public key; `IdentifyTrigger` is deprecated. `NativeIdentifyResult` no longer has `triggers`. `suspectScore` and `suspectLevel` are `null` when unscored or hidden by the SDK key.
 - `IdentifyTrigger.weight` is optional and deprecated: customers' weights do not reach the browser.
 - `EngineIdentity.agrees` is deprecated and no longer sent.
 
