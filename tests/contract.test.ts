@@ -10,14 +10,10 @@ import type {
 } from '../src/index.js'
 
 describe('the identify result', () => {
-  it('keeps reason optional, so 0.1.0 code reading it still compiles and gets undefined', () => {
-    // A browser or an app is no longer told why a submission went unscored.
-    expectTypeOf<IdentifyResult['reason']>().toEqualTypeOf<string | undefined>()
-    expectTypeOf<NativeIdentifyResult['reason']>().toEqualTypeOf<string | undefined>()
-    const result = {} as Omit<IdentifyResult, 'reason'>
-    // Assignable without it: nothing that builds a result has to invent one.
-    const built: IdentifyResult = result
-    void built
+  it('does not tell a browser or an app why a submission went unscored', () => {
+    // Only a secret key reads `reason`, on the server-side event read.
+    expectTypeOf<IdentifyResult>().not.toHaveProperty('reason')
+    expectTypeOf<NativeIdentifyResult>().not.toHaveProperty('reason')
   })
 
   it('tells an app a nullable score and never a signal', () => {

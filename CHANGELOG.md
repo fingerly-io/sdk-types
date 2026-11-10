@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- `IdentifyResult` and `NativeIdentifyResult` have no `reason`, and `EngineIdentity` has no `agrees`: the types hold only what the server sends a browser or an app.
+
 ## 0.1.1
 
 - Removed: `Verdict`, `Verdicts`, `IdentifyTrigger`, `IdentifyResult.verdicts`, `IdentifyResult.triggers` and `verdicts` on `DeferredIdentifyResult`. Read `suspectLevel` in the page and signals on your backend.

@@ -127,11 +127,6 @@ export interface Lie {
 export interface EngineIdentity {
   claimed?: string
   observed?: string
-  /**
-   * @deprecated Not sent since 0.1.1. The server compares [[claimed]] and
-   * [[observed]] itself; kept so a report stored by an older SDK still types.
-   */
-  agrees?: boolean
 }
 
 /** The tamper layer's findings. Raw; the server decides what they are worth. */
@@ -188,13 +183,8 @@ export interface NativeIdentifyResult {
    */
   duplicate: boolean | null
 
+  /** As [[IdentifyResult.state]]. */
   state: string
-  /**
-   * @deprecated An app is no longer told why a submission went unscored, so
-   * this is `undefined`. Read `reason` on the server-side event read. See
-   * [[IdentifyResult.reason]].
-   */
-  reason?: string
 
   /** `null` when absent: unscored, or hidden by the SDK key. Not the same as zero. */
   suspectScore: number | null
@@ -306,18 +296,16 @@ export interface IdentifyResult {
    */
   duplicate: boolean
 
-  /** `enriched`, or `unavailable` when the address could not be looked up. */
-  state: string
   /**
-   * @deprecated Browsers no longer receive this, so it is `undefined`.
+   * `enriched`, or `unavailable` when the address could not be looked up.
    *
    * Why an `unavailable` submission went unscored describes the service's own
-   * infrastructure, which is nothing a visitor's page should be able to read.
-   * Your backend reads it as `reason` on the server-side event read (`GET
-   * /api/v1/events/{request_id}` with a secret key), by [[requestId]]. Kept,
-   * optional, so code written against 0.1.0 still compiles.
+   * infrastructure, which is nothing a visitor's page should be able to read,
+   * so it is not on this result. Your backend reads it as `reason` on the
+   * server-side event read (`GET /api/v1/events/{request_id}` with a secret
+   * key), by [[requestId]].
    */
-  reason?: string
+  state: string
 
   /**
    * The weighted sum of the signals that fired, under the weights in force when
@@ -349,7 +337,7 @@ export interface IdentifyResult {
 //
 // The same submission as the server keeps it, fetched by `requestId` when
 // somebody wants it again later - a support question, a backend double-checking
-// what the browser was told. The verdict itself no longer waits for this: it
+// what the browser was told. The verdict itself does not wait for this: it
 // comes back with the submission.
 //
 // The types live here because every SDK has to name them.
