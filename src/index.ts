@@ -335,9 +335,6 @@ export interface IdentifyResult {
    * callers; omitted on public browser keys).
    */
   triggers?: IdentifyTrigger[]
-
-  /** The client report that was collected and submitted. */
-  report: SignalReport
 }
 
 // ---------------------------------------------------------------------------
