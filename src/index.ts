@@ -291,6 +291,11 @@ export interface IdentifySubmission {
    * `web_ticket_missing` and still answers.
    */
   ticket?: string
+  /**
+   * The proof of work for `ticket`, as a decimal nonce, when the ticket asked
+   * for one (`pow_bits` above 0) and it was solved within the budget.
+   */
+  ticket_pow?: string
 }
 
 /**
@@ -311,6 +316,11 @@ export interface FreshnessTicket {
   ticket: string
   /** RFC 3339 UTC. */
   expires_at: string
+  /**
+   * Leading zero bits the ticket's proof of work needs (1 to 22). Absent or 0
+   * when the SDK key does not ask for one.
+   */
+  pow_bits?: number
 }
 
 /**

@@ -112,6 +112,14 @@ describe('web freshness ticket', () => {
     expectTypeOf<TicketRequest['op']>().toEqualTypeOf<'ticket'>()
     expectTypeOf<TicketRequest['v']>().toEqualTypeOf<3>()
     expectTypeOf<TicketRequest['sdk']['platform']>().toEqualTypeOf<'web'>()
-    expectTypeOf<FreshnessTicket>().toEqualTypeOf<{ ticket: string; expires_at: string }>()
+    expectTypeOf<FreshnessTicket>().toEqualTypeOf<{
+      ticket: string
+      expires_at: string
+      pow_bits?: number
+    }>()
+  })
+
+  it('carries an optional proof of work next to the ticket', () => {
+    expectTypeOf<IdentifySubmission['ticket_pow']>().toEqualTypeOf<string | undefined>()
   })
 })
