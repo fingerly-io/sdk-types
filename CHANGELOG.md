@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0
+
+- The submission types follow the single `v: 3` wire envelope.
+  `IdentifySubmission` carries the optional `ticket` and `ticket_pow`;
+  `TicketRequest` is the `{ v: 3, op: 'ticket', sdk }` body and
+  `FreshnessTicket` its answer (`ticket`, `expires_at`, optional `pow_bits`).
+- `IdentifyResult` describes the device and carries no signal report;
+  `collect()` returns the report.
+- `RiskSignal` lists `web_ticket_missing`, `web_ticket_invalid`,
+  `attestation_downgrade`, `probe_errors` and `fetch_metadata_missing`, with
+  `report_incomplete` and `fingerprint_suppressed` among the cross-platform
+  signals.
+- No event types: no client SDK reads events, and the server SDKs type the
+  server's event read.
+
 ## 0.1.2
 
 - `IdentifyResult` and `NativeIdentifyResult` have no `reason`, and `EngineIdentity` has no `agrees`: the types hold only what the server sends a browser or an app.
