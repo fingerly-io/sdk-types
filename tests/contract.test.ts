@@ -3,6 +3,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import type {
   CollectOptions,
   ConsentState,
+  FreshnessTicket,
   IdentifyOptions,
   IdentifyResult,
   IdentifySubmission,
@@ -12,6 +13,7 @@ import type {
   RiskSignal,
   SignalReport,
   SuspectLevel,
+  TicketRequest,
 } from '../src/index.js'
 
 describe('the v3 identify result', () => {
@@ -90,11 +92,26 @@ describe('v3 submission envelope and risk signal catalogue', () => {
       'incognito',
       'automation',
       'fetch_metadata_missing',
+      'web_ticket_missing',
+      'web_ticket_invalid',
       'antidetect_browser',
       'fingerprint_suppressed',
       'embedded_web_view',
     ] as const satisfies readonly RiskSignal[]
 
     expectTypeOf<(typeof v3Signals)[number]>().toMatchTypeOf<RiskSignal>()
+  })
+})
+
+describe('web freshness ticket', () => {
+  it('carries an optional ticket on the submission', () => {
+    expectTypeOf<IdentifySubmission['ticket']>().toEqualTypeOf<string | undefined>()
+  })
+
+  it('posts op ticket with the web sdk block', () => {
+    expectTypeOf<TicketRequest['op']>().toEqualTypeOf<'ticket'>()
+    expectTypeOf<TicketRequest['v']>().toEqualTypeOf<3>()
+    expectTypeOf<TicketRequest['sdk']['platform']>().toEqualTypeOf<'web'>()
+    expectTypeOf<FreshnessTicket>().toEqualTypeOf<{ ticket: string; expires_at: string }>()
   })
 })

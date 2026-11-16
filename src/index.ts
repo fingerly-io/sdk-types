@@ -207,6 +207,8 @@ export type RiskSignal =
   | 'bad_bot'
   | 'automation'
   | 'fetch_metadata_missing'
+  | 'web_ticket_missing'
+  | 'web_ticket_invalid'
   | 'antidetect_browser'
   | 'virtual_machine'
   | 'privacy_settings'
@@ -283,6 +285,32 @@ export interface IdentifySubmission {
   consent: ConsentState
   signals: SignalReport
   tag?: string
+  /**
+   * A single-use freshness ticket the server issued to this page (web only).
+   * Omitted when none could be fetched; the server then scores
+   * `web_ticket_missing` and still answers.
+   */
+  ticket?: string
+}
+
+/**
+ * The body of a web ticket request, posted to the same path as a report.
+ */
+export interface TicketRequest {
+  v: 3
+  op: 'ticket'
+  sdk: { platform: 'web'; version: string }
+}
+
+/**
+ * A single-use web freshness ticket: the answer to a ticket request, and the
+ * `next_ticket` of a web identification answer.
+ */
+export interface FreshnessTicket {
+  /** Unpadded base64url. Opaque to the SDK. */
+  ticket: string
+  /** RFC 3339 UTC. */
+  expires_at: string
 }
 
 /**

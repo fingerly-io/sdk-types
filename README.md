@@ -12,7 +12,10 @@ pnpm add -D @fingerly/types@^0.3.0
 
 - **Single-pass `v: 3` ingest envelope (`IdentifySubmission`):** `v: 3`, `sdk`,
   `consent`, `signals` (`SignalReport` carrying `schema`, `budget_ms`,
-  `elapsed_ms`, `sources`, and `integrity`), and optional `tag`.
+  `elapsed_ms`, `sources`, and `integrity`), and optional `tag` and `ticket`.
+- **Web freshness ticket (`TicketRequest`, `FreshnessTicket`):** the
+  `op: 'ticket'` request body and the `{ ticket, expires_at }` answer, also
+  returned as `next_ticket` on a web identification answer.
 - **Collection options (`CollectOptions`, `IdentifyOptions`):** `signal`
   (`AbortSignalLike`), `incognitoDetection: 'standard' | 'extended'`, and `tag`.
 - **1-RTT server answer (`IdentifyResult`, `NativeIdentifyResult`):** `requestId`,
