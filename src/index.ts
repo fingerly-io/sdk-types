@@ -180,6 +180,7 @@ export type RiskSignal =
   | 'geo_mismatch'
   | 'device_inconsistent'
   | 'report_incomplete'
+  | 'fingerprint_suppressed'
   // Network & IP intelligence signals
   | 'tor'
   | 'proxy'
@@ -208,7 +209,6 @@ export type RiskSignal =
   | 'fetch_metadata_missing'
   | 'antidetect_browser'
   | 'virtual_machine'
-  | 'fingerprint_suppressed'
   | 'privacy_settings'
   | 'embedded_web_view'
   | 'remote_control'
@@ -339,110 +339,3 @@ export interface IdentifyResult {
    */
   triggers?: IdentifyTrigger[]
 }
-
-// ---------------------------------------------------------------------------
-// Stored event shapes.
-// ---------------------------------------------------------------------------
-
-export interface IdentificationConfidence {
-  score: number
-  version: string
-}
-
-export interface Identification {
-  visitor_id: string
-  confidence: IdentificationConfidence
-  visitor_found: boolean
-  first_seen_at: number
-  last_seen_at: number
-}
-
-export interface IpGeolocation {
-  accuracy_radius: number
-  latitude: number
-  longitude: number
-  postal_code: string
-  timezone: string
-  city_name: string
-  country_code: string
-  country_name: string
-  continent_code: string
-  continent_name: string
-  subdivisions: { iso_code: string; name: string }[]
-}
-
-export interface IpInfoV4 {
-  address: string
-  geolocation: IpGeolocation
-  asn: string
-  asn_name: string
-  asn_network: string
-  asn_type: string
-  datacenter_result: boolean
-}
-
-export interface VelocityWindow {
-  '5_minutes': number
-  '1_hour': number
-  '24_hours': number
-}
-
-export interface Velocity {
-  distinct_ip: VelocityWindow
-  distinct_country: VelocityWindow
-  events: VelocityWindow
-  ip_events: VelocityWindow
-}
-
-/** Fields every platform reports. */
-export interface FingerlyEventBase {
-  event_id: string
-  timestamp: number
-  source: 'device'
-  sdk: { platform: SdkPlatform; version: string }
-  replayed: boolean
-  identification: Identification
-  ip_address: string
-  ip_info: { v4: IpInfoV4 }
-  proxy: boolean
-  proxy_confidence: Confidence
-  vpn: boolean
-  vpn_confidence: Confidence
-  tampering: boolean
-  tampering_confidence: Confidence
-  device_inconsistent?: boolean
-  suspect_score: number
-  velocity: Velocity
-}
-
-/** Signals only a native app can observe. */
-export interface FingerlyMobileEvent extends FingerlyEventBase {
-  sdk: { platform: 'android' | 'ios'; version: string }
-  package_name: string
-  emulator: boolean
-  root_apps: boolean
-  app_cloner?: boolean
-  cloned_app: boolean
-  jailbreak?: boolean
-  simulator?: boolean
-  frida: boolean
-  mitm_attack?: boolean
-  attestation_failed?: boolean
-  attestation_missing?: boolean
-  report_incomplete?: boolean
-  custom_root_ca?: boolean
-  secondary_user_profile?: boolean
-  developer_tools: boolean
-  factory_reset_timestamp?: number
-  active_call: boolean
-}
-
-export interface FingerlyWebEvent extends FingerlyEventBase {
-  sdk: { platform: 'web'; version: string }
-  browser_name: string
-  browser_version: string
-  incognito: boolean
-  ad_blocker?: boolean
-}
-
-export type FingerlyEvent = FingerlyMobileEvent | FingerlyWebEvent

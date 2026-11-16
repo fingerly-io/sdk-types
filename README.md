@@ -20,12 +20,12 @@ pnpm add -D @fingerly/types@^0.3.0
   inside an embedded WebView, or on high-risk unmatched Web traffic under
   **Option B**), `visitorConfidence`, `identifiable`, `duplicate`, `state`,
   `suspectScore`, `suspectLevel`, and `report`.
-- **Canonical v3 risk signal union (`RiskSignal`) and stored event shapes
-  (`FingerlyEvent`, `FingerlyWebEvent`, `FingerlyMobileEvent`).**
+- **Canonical v3 risk signal union (`RiskSignal`).**
 
 This package contains TypeScript declarations only (`ES2020`, zero DOM globals,
 zero runtime code). Collection, transport, hardware attestation, and scoring
-belong to the platform SDKs and the Fingerly server.
+belong to the platform SDKs and the Fingerly server. Stored events are read
+server-side with a secret key, so their types live in the server SDKs.
 
 ## Development
 
