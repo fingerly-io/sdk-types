@@ -73,8 +73,10 @@ describe('v3 submission envelope and risk signal catalogue', () => {
   it('includes all orthogonal v3 risk signals from v3-manifest.json and openapi.json', () => {
     const v3Signals = [
       'attestation_failed',
+      'attestation_downgrade',
       'device_inconsistent',
       'report_incomplete',
+      'probe_errors',
       'tampering',
       'custom_root_ca',
       'secondary_user_profile',
@@ -87,6 +89,7 @@ describe('v3 submission envelope and risk signal catalogue', () => {
       'simulator',
       'incognito',
       'automation',
+      'fetch_metadata_missing',
       'antidetect_browser',
       'fingerprint_suppressed',
       'embedded_web_view',
