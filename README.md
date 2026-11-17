@@ -20,13 +20,17 @@
 
 ## What is this
 
-`@fingerly/types` holds the TypeScript types that every Fingerly SDK agrees on: what a browser or an
-app submits and what the Fingerly API answers. [Fingerly](https://fingerly.io) is device
-intelligence for fraud prevention.
+`@fingerly/types` holds the canonical TypeScript `v: 3` wire contracts that every Fingerly client
+SDK agrees on: what a browser or an app submits and what the Fingerly API answers. It is shared by
+the browser SDKs (`@fingerly/core`, `@fingerly/web-js`, and the framework bindings) and the
+TypeScript mobile bridges (`@fingerly/react-native`, `@fingerly/lynx`).
+[Fingerly](https://fingerly.io) is device intelligence for fraud prevention.
 
-This package contains types only. Runtime collection, transport, and scoring belong to the
-platform SDKs. You do not need it to use Fingerly: the browser and framework packages already
-depend on it. Install it when you want to type your own code against the same shapes.
+This package contains TypeScript declarations only (`ES2020`, zero DOM globals, zero runtime
+code). Collection, transport, hardware attestation, and scoring belong to the platform SDKs and
+the Fingerly server. Stored events are read server-side with a secret key, so their types live in
+the server SDKs. You do not need this package to use Fingerly: the browser and framework packages
+already depend on it. Install it when you want to type your own code against the same shapes.
 
 ## Getting started
 
@@ -35,20 +39,38 @@ depend on it. Install it when you want to type your own code against the same sh
 2. Install:
 
    ```sh
-   npm install @fingerly/types
+   npm install -D @fingerly/types@^0.3.0
    ```
 
 3. Import the types you need:
 
    ```ts
-   import type { IdentifyResult, FingerlyEvent } from '@fingerly/types'
+   import type { IdentifyResult } from '@fingerly/types'
 
    function describe(result: IdentifyResult): string {
      return `${result.visitorId}: ${result.suspectLevel ?? 'not scored'}`
    }
    ```
 
-The package ships ESM and CommonJS builds with declarations (`dist` only).
+The package ships ESM and CommonJS entry points with declarations (`dist` only).
+
+## What lives here
+
+- **Single-pass `v: 3` ingest envelope (`IdentifySubmission`):** `v: 3`, `sdk`,
+  `consent`, `signals` (`SignalReport` carrying `schema`, `budget_ms`,
+  `elapsed_ms`, `sources`, and `integrity`), and optional `tag`, `ticket` and
+  `ticket_pow`.
+- **Web freshness ticket (`TicketRequest`, `FreshnessTicket`):** the
+  `op: 'ticket'` request body and the `{ ticket, expires_at, pow_bits? }`
+  answer, also returned as `next_ticket` on a web identification answer.
+- **Collection options (`CollectOptions`, `IdentifyOptions`):** `signal`
+  (`AbortSignalLike`), `incognitoDetection: 'standard' | 'extended'`, and `tag`.
+- **1-RTT server answer (`IdentifyResult`, `NativeIdentifyResult`):** `requestId`,
+  `visitorId` (`""` with `visitorIsNew: false` whenever `identifiable === false`,
+  inside an embedded WebView, or on high-risk unmatched Web traffic),
+  `visitorConfidence`, `identifiable`, `duplicate`, `state`, `suspectScore`
+  and `suspectLevel`. The signal report is what `collect()` returns.
+- **Canonical v3 risk signal union (`RiskSignal`).**
 
 ## Development
 

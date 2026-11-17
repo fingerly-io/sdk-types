@@ -4,6 +4,10 @@ import { describe, expect, it } from 'vitest'
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
 
 describe('the published package', () => {
+  it('is versioned at 0.3.0 for the v3 wire contract', () => {
+    expect(pkg.version).toBe('0.3.0')
+  })
+
   it('declares types from the built declarations, not from source', () => {
     expect(pkg.types).toBe('./dist/index.d.ts')
     expect(pkg.exports['.'].import.types).toBe('./dist/index.d.ts')
