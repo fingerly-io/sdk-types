@@ -40,7 +40,7 @@ already depend on it. Install it when you want to type your own code against the
 2. Install:
 
    ```sh
-   npm install -D @fingerly/types@^0.3.0
+   npm install -D @fingerly/types@^0.4.0
    ```
 
 3. Import the types and constants you need:
