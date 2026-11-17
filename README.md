@@ -68,8 +68,8 @@ The package ships ESM and CommonJS entry points with declarations (`dist` only).
 - **1-RTT server answer (`IdentifyResult`, `NativeIdentifyResult`):** `requestId`,
   `visitorId` (`""` with `visitorIsNew: false` whenever `identifiable === false`,
   inside an embedded WebView, or on high-risk unmatched Web traffic),
-  `visitorConfidence`, `identifiable`, `duplicate`, `state`, `suspectScore`,
-  `suspectLevel`, and `report`.
+  `visitorConfidence`, `identifiable`, `duplicate`, `state`, `suspectScore`
+  and `suspectLevel`. The signal report is what `collect()` returns.
 - **Canonical v3 risk signal union (`RiskSignal`).**
 
 ## Development
