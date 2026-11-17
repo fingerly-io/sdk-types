@@ -26,8 +26,9 @@ the browser SDKs (`@fingerly/core`, `@fingerly/web-js`, and the framework bindin
 TypeScript mobile bridges (`@fingerly/react-native`, `@fingerly/lynx`).
 [Fingerly](https://fingerly.io) is device intelligence for fraud prevention.
 
-This package contains TypeScript declarations only (`ES2020`, zero DOM globals, zero runtime
-code). Collection, transport, hardware attestation, and scoring belong to the platform SDKs and
+This package contains TypeScript declarations and a few plain string constants
+(`ES2020`, zero DOM globals, no side effects, so a bundler drops what you do not import).
+Collection, transport, hardware attestation, and scoring belong to the platform SDKs and
 the Fingerly server. Stored events are read server-side with a secret key, so their types live in
 the server SDKs. You do not need this package to use Fingerly: the browser and framework packages
 already depend on it. Install it when you want to type your own code against the same shapes.
@@ -39,15 +40,16 @@ already depend on it. Install it when you want to type your own code against the
 2. Install:
 
    ```sh
-   npm install -D @fingerly/types@^0.3.0
+   npm install -D @fingerly/types@^0.4.0
    ```
 
-3. Import the types you need:
+3. Import the types and constants you need:
 
    ```ts
-   import type { IdentifyResult } from '@fingerly/types'
+   import { SuspectLevel, type IdentifyResult } from '@fingerly/types'
 
    function describe(result: IdentifyResult): string {
+     if (result.suspectLevel === SuspectLevel.High) return `${result.visitorId}: review`
      return `${result.visitorId}: ${result.suspectLevel ?? 'not scored'}`
    }
    ```
@@ -70,7 +72,16 @@ The package ships ESM and CommonJS entry points with declarations (`dist` only).
   inside an embedded WebView, or on high-risk unmatched Web traffic),
   `visitorConfidence`, `identifiable`, `duplicate`, `state`, `suspectScore`
   and `suspectLevel`. The signal report is what `collect()` returns.
-- **Canonical v3 risk signal union (`RiskSignal`).**
+- **Canonical v3 risk signal catalogue (`Signal`, with `RiskSignal` as its type and the open
+  `SignalName`).** A trigger's `signal` is a raw detector, such as `Signal.VpnPublic`; its
+  `group` is the group it is reported under, such as `Signal.Vpn`.
+- **Runtime constants.** Every closed set of values is an `as const` object with a same-named
+  type: `Signal`, `SuspectLevel`, `Confidence`, `EventState`, `ConsentState`,
+  `IncognitoDetection` and `SdkPlatform`. A member is its value in PascalCase, word by word
+  (`Signal.FingerprintSuppressed` is `'fingerprint_suppressed'`, `SdkPlatform.ReactNativeIos`
+  is `'react-native-ios'`). Comparing with the constant or with the string both compile, and
+  server-filled fields such as `state` and `IdentifyTrigger.signal` are typed open
+  (`EventState | (string & {})`), so a value a newer server adds still type-checks.
 
 ## Development
 

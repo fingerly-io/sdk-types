@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.4.0
+
+- Runtime constants, each an `as const` object with a same-named type:
+  `Signal`, `SuspectLevel`, `Confidence`, `EventState`, `ConsentState`,
+  `IncognitoDetection` and `SdkPlatform`. Members are the value in
+  PascalCase, such as `SuspectLevel.High` and
+  `Signal.FingerprintSuppressed`.
+- `Signal` lists every signal group and raw signal the server reports, the
+  same list as `@fingerly/node`. `RiskSignal` is its type, and `SignalName`
+  (`Signal | (string & {})`) is the open form `IdentifyTrigger.signal` and
+  `IdentifyTrigger.group` use.
+- Added `repeated_reinstall`, `device_activity_high` and
+  `device_activity_very_high`, and removed `app_attest_key_churn`, which the
+  server no longer reports.
+- `IdentifyResult.state` and `NativeIdentifyResult.state` are
+  `EventState | (string & {})`.
+
 ## 0.3.0
 
 - The submission types follow the single `v: 3` wire envelope.

@@ -4,25 +4,40 @@
  * Nothing here touches the DOM. A type that only a browser can populate still
  * belongs in this file, because the server and the mobile SDKs both need to
  * name it; what does not belong here is the code that reads a `window`.
+ *
+ * Every closed set of values is an `as const` object with a same-named type,
+ * so `result.suspectLevel === SuspectLevel.High` and
+ * `result.suspectLevel === 'high'` both type-check. A member is its value in
+ * PascalCase, word by word: `fingerprint_suppressed` is
+ * `Signal.FingerprintSuppressed`, `react-native-ios` is
+ * `SdkPlatform.ReactNativeIos`.
  */
 
 /** Which SDK collected a report. Mirrors `schemas.SDKInfo` on the server. */
-export type SdkPlatform =
-  | 'web'
-  | 'android'
-  | 'ios'
-  | 'react-native-ios'
-  | 'react-native-android'
-  | 'flutter-ios'
-  | 'flutter-android'
-  | 'lynx-ios'
-  | 'lynx-android'
+export const SdkPlatform = {
+  Web: 'web',
+  Android: 'android',
+  Ios: 'ios',
+  ReactNativeIos: 'react-native-ios',
+  ReactNativeAndroid: 'react-native-android',
+  FlutterIos: 'flutter-ios',
+  FlutterAndroid: 'flutter-android',
+  LynxIos: 'lynx-ios',
+  LynxAndroid: 'lynx-android',
+} as const
+/** One of the platforms in {@link SdkPlatform}. */
+export type SdkPlatform = (typeof SdkPlatform)[keyof typeof SdkPlatform]
 
 /**
  * Whether opt-in extended incognito probes (such as Chromium IndexedDB
  * durability timing) execute alongside zero-write standard probes.
  */
-export type IncognitoDetection = 'standard' | 'extended'
+export const IncognitoDetection = {
+  Standard: 'standard',
+  Extended: 'extended',
+} as const
+/** One of the modes in {@link IncognitoDetection}. */
+export type IncognitoDetection = (typeof IncognitoDetection)[keyof typeof IncognitoDetection]
 
 /** Minimal runtime-agnostic `AbortSignal` contract (compiles under pure ES2020 without DOM). */
 export interface AbortSignalLike {
@@ -73,7 +88,13 @@ export interface MobileIdentifyOptions {
  * source, touch no storage, send nothing, and fail `identify()` with a consent
  * error - and are kept apart only because a consent tool reports them apart.
  */
-export type ConsentState = 'granted' | 'pending' | 'denied'
+export const ConsentState = {
+  Granted: 'granted',
+  Pending: 'pending',
+  Denied: 'denied',
+} as const
+/** One of the states in {@link ConsentState}. */
+export type ConsentState = (typeof ConsentState)[keyof typeof ConsentState]
 
 /**
  * How a source finished.
@@ -162,81 +183,134 @@ export interface SignalReport {
 }
 
 /** How sure the server is of a finding. Matches its `*_confidence` fields. */
-export type Confidence = 'low' | 'medium' | 'high'
+export const Confidence = {
+  Low: 'low',
+  Medium: 'medium',
+  High: 'high',
+} as const
+/** One of the grades in {@link Confidence}. */
+export type Confidence = (typeof Confidence)[keyof typeof Confidence]
 
 /** Categorical risk band returned by the server. */
-export type SuspectLevel = 'low' | 'medium' | 'high'
+export const SuspectLevel = {
+  Low: 'low',
+  Medium: 'medium',
+  High: 'high',
+} as const
+/** One of the levels in {@link SuspectLevel}. */
+export type SuspectLevel = (typeof SuspectLevel)[keyof typeof SuspectLevel]
 
 /**
- * Canonical v3 risk signal catalogue (`sdks/contract/openapi.json` &
- * `sdks/contract/v3-manifest.json`).
+ * Every signal group and raw detector identifier the server reports, the same
+ * list as `Signal` in `@fingerly/node`. A trigger's `signal` is a raw
+ * detector, such as `vpn_public`; its `group` is the group it is reported
+ * under, such as `vpn`.
  */
-export type RiskSignal =
-  // Cross-platform signals
-  | 'high_activity'
-  | 'tampering'
-  | 'device_farm'
-  | 'developer_tools'
-  | 'geo_mismatch'
-  | 'device_inconsistent'
-  | 'report_incomplete'
-  | 'fingerprint_suppressed'
-  // Network & IP intelligence signals
-  | 'tor'
-  | 'proxy'
-  | 'residential_proxy'
-  | 'residential_proxy_low_confidence'
-  | 'residential_proxy_medium_confidence'
-  | 'residential_proxy_high_confidence'
-  | 'vpn_public'
-  | 'vpn_timezone'
-  | 'vpn_relay'
-  | 'vpn_mobile'
-  | 'vpn_os_mismatch'
-  | 'vpn_low_confidence'
-  | 'vpn_medium_confidence'
-  | 'vpn_high_confidence'
-  | 'ip_blocklist_email_spam'
-  | 'ip_blocklist_attack_source'
-  | 'ip_abuser'
-  | 'datacenter_ip'
-  | 'bogon_ip'
-  | 'anycast_ip'
-  // Browser-only signals
-  | 'incognito'
-  | 'bad_bot'
-  | 'automation'
-  | 'fetch_metadata_missing'
-  | 'web_ticket_missing'
-  | 'web_ticket_invalid'
-  | 'antidetect_browser'
-  | 'virtual_machine'
-  | 'privacy_settings'
-  | 'embedded_web_view'
-  | 'remote_control'
-  // Native-only signals
-  | 'emulator'
-  | 'root_apps'
-  | 'app_cloner'
-  | 'jailbreak'
-  | 'simulator'
-  | 'frida'
-  | 'mitm_attack'
-  | 'active_call'
-  | 'attestation_missing'
-  | 'attestation_downgrade'
-  | 'app_attest_key_churn'
-  | 'play_device_integrity_failed'
-  | 'play_app_unrecognized'
-  | 'attestation_failed'
-  | 'probe_errors'
-  | 'custom_root_ca'
-  | 'secondary_user_profile'
+export const Signal = {
+  Tor: 'tor',
+  DatacenterProxy: 'datacenter_proxy',
+  Proxy: 'proxy',
+  DatacenterIp: 'datacenter_ip',
+  ResidentialProxy: 'residential_proxy',
+  ResidentialProxyLowConfidence: 'residential_proxy_low_confidence',
+  ResidentialProxyMediumConfidence: 'residential_proxy_medium_confidence',
+  ResidentialProxyHighConfidence: 'residential_proxy_high_confidence',
+  Vpn: 'vpn',
+  VpnPublic: 'vpn_public',
+  VpnTimezone: 'vpn_timezone',
+  VpnRelay: 'vpn_relay',
+  VpnMobile: 'vpn_mobile',
+  VpnOsMismatch: 'vpn_os_mismatch',
+  VpnLowConfidence: 'vpn_low_confidence',
+  VpnMediumConfidence: 'vpn_medium_confidence',
+  VpnHighConfidence: 'vpn_high_confidence',
+  IpBlocklist: 'ip_blocklist',
+  IpBlocklistEmailSpam: 'ip_blocklist_email_spam',
+  IpBlocklistAttackSource: 'ip_blocklist_attack_source',
+  IpReputation: 'ip_reputation',
+  IpAbuser: 'ip_abuser',
+  NetworkAnomaly: 'network_anomaly',
+  BogonIp: 'bogon_ip',
+  AnycastIp: 'anycast_ip',
+  LocationSpoofing: 'location_spoofing',
+  GeoMismatch: 'geo_mismatch',
+  IosSimulator: 'ios_simulator',
+  Simulator: 'simulator',
+  AndroidEmulator: 'android_emulator',
+  Emulator: 'emulator',
+  VirtualMachine: 'virtual_machine',
+  JailbrokenDevice: 'jailbroken_device',
+  Jailbreak: 'jailbreak',
+  RootedDevice: 'rooted_device',
+  RootApps: 'root_apps',
+  PlayDeviceIntegrityFailed: 'play_device_integrity_failed',
+  ClonedApp: 'cloned_app',
+  AppCloner: 'app_cloner',
+  PlayAppUnrecognized: 'play_app_unrecognized',
+  DeviceFarm: 'device_farm',
+  RepeatedReinstall: 'repeated_reinstall',
+  DeviceActivityHigh: 'device_activity_high',
+  DeviceActivityVeryHigh: 'device_activity_very_high',
+  MitmAttack: 'mitm_attack',
+  FridaDetected: 'frida_detected',
+  Frida: 'frida',
+  BrowserTampering: 'browser_tampering',
+  Tampering: 'tampering',
+  AntidetectBrowser: 'antidetect_browser',
+  FingerprintSuppressed: 'fingerprint_suppressed',
+  DeveloperTools: 'developer_tools',
+  RemoteControl: 'remote_control',
+  Bot: 'bot',
+  Automation: 'automation',
+  BadBot: 'bad_bot',
+  FetchMetadataMissing: 'fetch_metadata_missing',
+  WebTicketMissing: 'web_ticket_missing',
+  WebTicketInvalid: 'web_ticket_invalid',
+  HighActivity: 'high_activity',
+  IncognitoMode: 'incognito_mode',
+  Incognito: 'incognito',
+  PrivacySettings: 'privacy_settings',
+  EmbeddedWebView: 'embedded_web_view',
+  ActiveCall: 'active_call',
+  AttestationMissing: 'attestation_missing',
+  AttestationFailed: 'attestation_failed',
+  AttestationDowngrade: 'attestation_downgrade',
+  DeviceInconsistent: 'device_inconsistent',
+  ReportIncomplete: 'report_incomplete',
+  ProbeErrors: 'probe_errors',
+  CustomRootCa: 'custom_root_ca',
+  SecondaryUserProfile: 'secondary_user_profile',
+} as const
+/** One of the signals in {@link Signal}. */
+export type Signal = (typeof Signal)[keyof typeof Signal]
+
+/**
+ * One of the signals in {@link Signal}, or a value a newer server added, so
+ * code built today still compiles against it.
+ */
+export type SignalName = Signal | (string & {})
+
+/** The canonical v3 risk signal catalogue: the closed {@link Signal} list. */
+export type RiskSignal = Signal
+
+/**
+ * An identification's `state`, the same list as `EventState` in
+ * `@fingerly/node`: `Enriched` when it was fully processed, `Unavailable`
+ * when the network lookup could not run, so it was not scored. `Pending` is
+ * a server read's "not recorded yet"; an identify answer is never pending.
+ */
+export const EventState = {
+  Pending: 'pending',
+  Enriched: 'enriched',
+  Unavailable: 'unavailable',
+} as const
+/** One of the states in {@link EventState}. */
+export type EventState = (typeof EventState)[keyof typeof EventState]
 
 /** One active risk trigger (`IdentifyTriggerOut` in OpenAPI). */
 export interface IdentifyTrigger {
-  signal: RiskSignal | (string & {})
-  group?: string
+  signal: SignalName
+  group?: SignalName
   weight?: number | null
   confidence?: Confidence | (string & {})
 }
@@ -263,7 +337,7 @@ export interface NativeIdentifyResult {
   duplicate: boolean | null
 
   /** As [[IdentifyResult.state]]. */
-  state: string
+  state: EventState | (string & {})
 
   /** `null` when absent: unscored, or hidden by the SDK key. Not the same as zero. */
   suspectScore: number | null
@@ -361,7 +435,7 @@ export interface IdentifyResult {
   /**
    * `enriched`, or `unavailable` when the address could not be looked up.
    */
-  state: string
+  state: EventState | (string & {})
 
   /**
    * Weighted sum of the signals that fired, or `null` when unscored or hidden
