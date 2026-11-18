@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest'
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
 
 describe('the published package', () => {
-  it('is versioned at 0.4.0 for the v3 wire contract', () => {
-    expect(pkg.version).toBe('0.4.0')
+  it('is versioned at 0.5.0 for the v3 wire contract', () => {
+    expect(pkg.version).toBe('0.5.0')
   })
 
   it('declares types from the built declarations, not from source', () => {

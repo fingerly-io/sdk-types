@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- Web session seal: the `Continuity` constant (`'none'` or `'session'`) with
+  its same-named type, the `SessionSeal` answer type (`seal`, `expires_at`),
+  and the optional `continuity` and `seal` fields of `IdentifySubmission`.
+  A web identification answer to a report that asked for
+  `continuity: 'session'` carries the next seal as `next_seal`.
+
 ## 0.4.0
 
 - Runtime constants, each an `as const` object with a same-named type:
