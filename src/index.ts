@@ -85,8 +85,11 @@ export interface MobileIdentifyOptions {
  *
  * `pending` is the default: an SDK identifies nobody until it is told
  * `granted`. `pending` and `denied` mean the same thing to the SDK - run no
- * source, touch no storage, send nothing, and fail `identify()` with a consent
- * error - and are kept apart only because a consent tool reports them apart.
+ * source, read or write no storage, send nothing, and fail `identify()` with a
+ * consent error - and are kept apart only because a consent tool reports them
+ * apart. The one difference: with `continuity: 'session'`, a browser SDK
+ * removes the session seal it holds in `sessionStorage` when consent is set to
+ * `denied`, and leaves it unread while consent is `pending`.
  */
 export const ConsentState = {
   Granted: 'granted',
