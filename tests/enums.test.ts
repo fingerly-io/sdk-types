@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest'
 import {
   Confidence,
   ConsentState,
+  Continuity,
   EventState,
   IncognitoDetection,
   SdkPlatform,
@@ -125,6 +126,7 @@ const sorted = (values: Iterable<string>) => [...new Set(values)].sort()
 const constants: Record<string, Record<string, string>> = {
   Confidence,
   ConsentState,
+  Continuity,
   EventState,
   IncognitoDetection,
   SdkPlatform,
@@ -149,6 +151,7 @@ describe('enum constants', () => {
     expect(Object.values(Confidence)).toEqual(['low', 'medium', 'high'])
     expect(Object.values(EventState)).toEqual(['pending', 'enriched', 'unavailable'])
     expect(Object.values(ConsentState)).toEqual(['granted', 'pending', 'denied'])
+    expect(Object.values(Continuity)).toEqual(['none', 'session'])
     expect(Object.values(IncognitoDetection)).toEqual(['standard', 'extended'])
     expect(Object.values(SdkPlatform)).toEqual([
       'web',

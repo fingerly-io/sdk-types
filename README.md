@@ -60,11 +60,15 @@ The package ships ESM and CommonJS entry points with declarations (`dist` only).
 
 - **Single-pass `v: 3` ingest envelope (`IdentifySubmission`):** `v: 3`, `sdk`,
   `consent`, `signals` (`SignalReport` carrying `schema`, `budget_ms`,
-  `elapsed_ms`, `sources`, and `integrity`), and optional `tag`, `ticket` and
-  `ticket_pow`.
+  `elapsed_ms`, `sources`, and `integrity`), and optional `tag`, `ticket`,
+  `ticket_pow`, `continuity` and `seal`.
 - **Web freshness ticket (`TicketRequest`, `FreshnessTicket`):** the
   `op: 'ticket'` request body and the `{ ticket, expires_at, pow_bits? }`
   answer, also returned as `next_ticket` on a web identification answer.
+- **Web session seal (`Continuity`, `SessionSeal`):** the `continuity` mode a
+  browser client is built with (`'none'` by default, or `'session'`), and the
+  `{ seal, expires_at }` a web identification answer carries as `next_seal`
+  when the report asked for `continuity: 'session'`.
 - **Collection options (`CollectOptions`, `IdentifyOptions`):** `signal`
   (`AbortSignalLike`), `incognitoDetection: 'standard' | 'extended'`, and `tag`.
 - **1-RTT server answer (`IdentifyResult`, `NativeIdentifyResult`):** `requestId`,
@@ -77,7 +81,7 @@ The package ships ESM and CommonJS entry points with declarations (`dist` only).
   `group` is the group it is reported under, such as `Signal.Vpn`.
 - **Runtime constants.** Every closed set of values is an `as const` object with a same-named
   type: `Signal`, `SuspectLevel`, `Confidence`, `EventState`, `ConsentState`,
-  `IncognitoDetection` and `SdkPlatform`. A member is its value in PascalCase, word by word
+  `Continuity`, `IncognitoDetection` and `SdkPlatform`. A member is its value in PascalCase, word by word
   (`Signal.FingerprintSuppressed` is `'fingerprint_suppressed'`, `SdkPlatform.ReactNativeIos`
   is `'react-native-ios'`). Comparing with the constant or with the string both compile, and
   server-filled fields such as `state` and `IdentifyTrigger.signal` are typed open

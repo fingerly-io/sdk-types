@@ -3,6 +3,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import type {
   CollectOptions,
   ConsentState,
+  Continuity,
   FreshnessTicket,
   IdentifyOptions,
   IdentifyResult,
@@ -11,6 +12,7 @@ import type {
   IncognitoDetection,
   NativeIdentifyResult,
   RiskSignal,
+  SessionSeal,
   SignalReport,
   SuspectLevel,
   TicketRequest,
@@ -121,5 +123,25 @@ describe('web freshness ticket', () => {
 
   it('carries an optional proof of work next to the ticket', () => {
     expectTypeOf<IdentifySubmission['ticket_pow']>().toEqualTypeOf<string | undefined>()
+  })
+})
+
+describe('web session seal', () => {
+  it('names the two continuity modes', () => {
+    expectTypeOf<Continuity>().toEqualTypeOf<'none' | 'session'>()
+  })
+
+  it('carries only the session mode and an optional seal on the submission', () => {
+    expectTypeOf<IdentifySubmission['continuity']>().toEqualTypeOf<'session' | undefined>()
+    expectTypeOf<IdentifySubmission['seal']>().toEqualTypeOf<string | undefined>()
+  })
+
+  it('never puts a seal or a continuity mode on a ticket request', () => {
+    expectTypeOf<TicketRequest>().not.toHaveProperty('seal')
+    expectTypeOf<TicketRequest>().not.toHaveProperty('continuity')
+  })
+
+  it('reads next_seal as a seal and its expiry', () => {
+    expectTypeOf<SessionSeal>().toEqualTypeOf<{ seal: string; expires_at: string }>()
   })
 })

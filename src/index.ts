@@ -97,6 +97,23 @@ export const ConsentState = {
 export type ConsentState = (typeof ConsentState)[keyof typeof ConsentState]
 
 /**
+ * Whether a browser SDK asks the server to carry an identified private window
+ * across the reports of one tab.
+ *
+ * `none` is the default: the SDK keeps nothing in the browser. With `session`
+ * each report asks for a session seal, and the SDK keeps the one the answer
+ * carries in `sessionStorage` for the life of the tab and sends it back on
+ * the next report. The seal is read and written only while consent is
+ * `granted`, and removed when consent is denied.
+ */
+export const Continuity = {
+  None: 'none',
+  Session: 'session',
+} as const
+/** One of the modes in {@link Continuity}. */
+export type Continuity = (typeof Continuity)[keyof typeof Continuity]
+
+/**
  * How a source finished.
  *
  * - `ok`          the source produced a value.
@@ -370,6 +387,18 @@ export interface IdentifySubmission {
    * for one (`pow_bits` above 0) and it was solved within the budget.
    */
   ticket_pow?: string
+  /**
+   * Asks for a session seal with the answer (web only). Sent on every report
+   * while the client's `continuity` option is `session`, and omitted
+   * otherwise; the server then issues no seal.
+   */
+  continuity?: typeof Continuity.Session
+  /**
+   * The session seal the previous answer in this tab carried as `next_seal`
+   * (web only, with `continuity`). Omitted when none is held or the held one
+   * has expired. One the server cannot verify is ignored, never refused.
+   */
+  seal?: string
 }
 
 /**
@@ -395,6 +424,19 @@ export interface FreshnessTicket {
    * when the SDK key does not ask for one.
    */
   pow_bits?: number
+}
+
+/**
+ * A web session seal: the `next_seal` of a web identification answer to a
+ * report that asked for `continuity: 'session'`. A signed statement of the
+ * visitor the server already answered with, bound to the project, the page
+ * origin and the browser's profile.
+ */
+export interface SessionSeal {
+  /** Unpadded base64url, at most 256 characters. Opaque to the SDK. */
+  seal: string
+  /** RFC 3339 UTC. */
+  expires_at: string
 }
 
 /**
