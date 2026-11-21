@@ -35,6 +35,7 @@ const SERVER_GROUPS = [
   'fingerprint_suppressed',
   'frida_detected',
   'high_activity',
+  'identity_obfuscated',
   'incognito_mode',
   'ios_simulator',
   'ip_blocklist',
@@ -55,6 +56,7 @@ const SERVER_GROUPS = [
 ]
 const SERVER_SIGNALS = [
   'active_call',
+  'ai_spoofed',
   'antidetect_browser',
   'anycast_ip',
   'app_cloner',
@@ -78,6 +80,7 @@ const SERVER_SIGNALS = [
   'frida',
   'geo_mismatch',
   'high_activity',
+  'identity_obfuscated',
   'incognito',
   'ip_abuser',
   'ip_blocklist_attack_source',
@@ -109,7 +112,6 @@ const SERVER_SIGNALS = [
   'vpn_os_mismatch',
   'vpn_public',
   'vpn_relay',
-  'vpn_timezone',
   'web_ticket_invalid',
   'web_ticket_missing',
 ]
