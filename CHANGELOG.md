@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 
 - The `AgentDetection` constant (`'interaction'`) with its same-named type:
   the opt-in interaction observation a browser SDK makes for recognising an
   assistant that drives the visitor's own browser.
+- `Signal` names `ai_spoofed` (a client that names a known AI agent but fails
+  its operator's check), `identity_obfuscated` (an opt-in strict
+  identity-randomisation mode in the browser) and `bootloader_unlocked` (an
+  Android device whose bootloader is unlocked), and no longer has
+  `VpnTimezone`, because the server no longer reports `vpn_timezone`.
 
 ## 0.5.0
 
