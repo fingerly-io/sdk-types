@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
 
 import {
+  AgentDetection,
   Confidence,
   ConsentState,
   Continuity,
@@ -23,6 +24,7 @@ const SERVER_GROUPS = [
   'android_emulator',
   'attestation_failed',
   'attestation_missing',
+  'bootloader_unlocked',
   'bot',
   'browser_tampering',
   'cloned_app',
@@ -35,6 +37,7 @@ const SERVER_GROUPS = [
   'fingerprint_suppressed',
   'frida_detected',
   'high_activity',
+  'identity_obfuscated',
   'incognito_mode',
   'ios_simulator',
   'ip_blocklist',
@@ -55,6 +58,7 @@ const SERVER_GROUPS = [
 ]
 const SERVER_SIGNALS = [
   'active_call',
+  'ai_spoofed',
   'antidetect_browser',
   'anycast_ip',
   'app_cloner',
@@ -64,6 +68,7 @@ const SERVER_SIGNALS = [
   'automation',
   'bad_bot',
   'bogon_ip',
+  'bootloader_unlocked',
   'custom_root_ca',
   'datacenter_ip',
   'developer_tools',
@@ -78,6 +83,7 @@ const SERVER_SIGNALS = [
   'frida',
   'geo_mismatch',
   'high_activity',
+  'identity_obfuscated',
   'incognito',
   'ip_abuser',
   'ip_blocklist_attack_source',
@@ -109,7 +115,6 @@ const SERVER_SIGNALS = [
   'vpn_os_mismatch',
   'vpn_public',
   'vpn_relay',
-  'vpn_timezone',
   'web_ticket_invalid',
   'web_ticket_missing',
 ]
@@ -124,6 +129,7 @@ const memberName = (value: string) =>
 const sorted = (values: Iterable<string>) => [...new Set(values)].sort()
 
 const constants: Record<string, Record<string, string>> = {
+  AgentDetection,
   Confidence,
   ConsentState,
   Continuity,
@@ -153,6 +159,7 @@ describe('enum constants', () => {
     expect(Object.values(ConsentState)).toEqual(['granted', 'pending', 'denied'])
     expect(Object.values(Continuity)).toEqual(['none', 'session'])
     expect(Object.values(IncognitoDetection)).toEqual(['standard', 'extended'])
+    expect(Object.values(AgentDetection)).toEqual(['interaction'])
     expect(Object.values(SdkPlatform)).toEqual([
       'web',
       'android',
@@ -171,6 +178,7 @@ describe('enum types', () => {
   it('derives each type from its constant', () => {
     expectTypeOf<SuspectLevel>().toEqualTypeOf<'low' | 'medium' | 'high'>()
     expectTypeOf<ConsentState>().toEqualTypeOf<'granted' | 'pending' | 'denied'>()
+    expectTypeOf<AgentDetection>().toEqualTypeOf<'interaction'>()
     expectTypeOf<RiskSignal>().toEqualTypeOf<Signal>()
     expectTypeOf<SignalName>().toEqualTypeOf<Signal | (string & {})>()
     expectTypeOf(Signal.FingerprintSuppressed).toEqualTypeOf<'fingerprint_suppressed'>()
