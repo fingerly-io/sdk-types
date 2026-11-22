@@ -39,6 +39,23 @@ export const IncognitoDetection = {
 /** One of the modes in {@link IncognitoDetection}. */
 export type IncognitoDetection = (typeof IncognitoDetection)[keyof typeof IncognitoDetection]
 
+/**
+ * What a browser SDK observes about how the page is being operated, for
+ * recognising an assistant that drives the visitor's own browser. Off unless
+ * the page asks for it, and only after consent.
+ *
+ * `interaction` keeps integer counts of input events (clicks by pointer type,
+ * pointer moves, key presses, input events by kind, pastes, wheel and scroll
+ * events, untrusted events, viewport steps and overlays), each capped at
+ * 10,000, and the length of the span they cover. Never a coordinate, a key, a
+ * field value, page text, an element identifier, a URL or a per-event time.
+ */
+export const AgentDetection = {
+  Interaction: 'interaction',
+} as const
+/** One of the modes in {@link AgentDetection}. */
+export type AgentDetection = (typeof AgentDetection)[keyof typeof AgentDetection]
+
 /** Minimal runtime-agnostic `AbortSignal` contract (compiles under pure ES2020 without DOM). */
 export interface AbortSignalLike {
   readonly aborted: boolean

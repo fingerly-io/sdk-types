@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The `AgentDetection` constant (`'interaction'`) with its same-named type:
+  the opt-in interaction observation a browser SDK makes for recognising an
+  assistant that drives the visitor's own browser.
+
 ## 0.5.0
 
 - Web session seal: the `Continuity` constant (`'none'` or `'session'`) with

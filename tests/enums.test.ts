@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
 
 import {
+  AgentDetection,
   Confidence,
   ConsentState,
   Continuity,
@@ -126,6 +127,7 @@ const memberName = (value: string) =>
 const sorted = (values: Iterable<string>) => [...new Set(values)].sort()
 
 const constants: Record<string, Record<string, string>> = {
+  AgentDetection,
   Confidence,
   ConsentState,
   Continuity,
@@ -155,6 +157,7 @@ describe('enum constants', () => {
     expect(Object.values(ConsentState)).toEqual(['granted', 'pending', 'denied'])
     expect(Object.values(Continuity)).toEqual(['none', 'session'])
     expect(Object.values(IncognitoDetection)).toEqual(['standard', 'extended'])
+    expect(Object.values(AgentDetection)).toEqual(['interaction'])
     expect(Object.values(SdkPlatform)).toEqual([
       'web',
       'android',
@@ -173,6 +176,7 @@ describe('enum types', () => {
   it('derives each type from its constant', () => {
     expectTypeOf<SuspectLevel>().toEqualTypeOf<'low' | 'medium' | 'high'>()
     expectTypeOf<ConsentState>().toEqualTypeOf<'granted' | 'pending' | 'denied'>()
+    expectTypeOf<AgentDetection>().toEqualTypeOf<'interaction'>()
     expectTypeOf<RiskSignal>().toEqualTypeOf<Signal>()
     expectTypeOf<SignalName>().toEqualTypeOf<Signal | (string & {})>()
     expectTypeOf(Signal.FingerprintSuppressed).toEqualTypeOf<'fingerprint_suppressed'>()
